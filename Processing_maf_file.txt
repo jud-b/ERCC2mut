@@ -1,0 +1,7 @@
+MAF files that contain data for multiple samples originating from the same patient, need to be filtered and to have one samples per patient. 
+For that, a dataframe with clinical information for each patient and respective samples is needed.
+
+The following filtering steps need to be applied:
+  1. For patients with multiple sample types select the Primary cancer sample (if available) (SAMPLE_TYPE = "Primary").
+  2. Keep samples sequenced with the most recent panel version (ex. if a patient has two samples, one sequenced with panel_v2 and the secodn with panel_v2, keep the sample sequenced with panel_v2).
+  3. Extracting information from the maf file, calculate the number of mutations that each sample has. Keep the sample with the highest number of mutations. When multiple samples per patient share the same maximum mutation count, ties can be broken arbitrarily.
