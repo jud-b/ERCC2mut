@@ -136,7 +136,7 @@ cosmic_signatures_indel = get_known_signatures(muttype = 'indel',
   source = 'COSMIC_v3.2', genome = "GRCh37") 
 
 # Subset the mutational matrices for only the samples that have >= 5 mutations
-# The sample names can be extracted from panel_mutation_data dataframe (generated in Hamonized_SNV_INS_DEL_calculation.R)
+# The sample names can be extracted from panel_mutation_data dataframe (generated in Harmonized_SNV_INS_DEL_calculation.R)
 sbs_mutation_matrix_panel <- sbs_mutation_matrix_panel[, colnames(sbs_mutation_matrix_panel) %in% panel_mutation_data$Tumor_Sample_Barcode]
 
 indel_mut_matrix_panel <- indel_mut_matrix_panel[, colnames(indel_mut_matrix_panel) %in% panel_mutation_data$Tumor_Sample_Barcode]
