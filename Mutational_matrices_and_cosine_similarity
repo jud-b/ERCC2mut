@@ -1,0 +1,147 @@
+# Generating mutational amtrices and cosine similarity values that are used as features in the panel-based ERCC2 model
+library(MutationalPatterns)
+library(ICAMS)
+
+# Load reference genome
+BiocManager::install("BSgenome.Hsapiens.UCSC.hg19")
+ref_genome <- "BSgenome.Hsapiens.UCSC.hg19"
+library(ref_genome, character.only = TRUE)
+
+# Inclde only relevant columns from the original maf_file 
+# Necessary information: Chromosome, Start and End positions for each mutation, Strand information (if available), Sample name, Variant type and reference and alternative alleles
+subset_maf_file <- maf_file[, c("Chromosome", "Start_Position", "End_Position", "Strand", "Tumor_Sample_Barcode", "Reference_Allele", "Tumor_Seq_Allele2", "Variant_Type")]
+
+# Rename the reference and alternative allele columns to REF and ALT, respectively (as GRanges object only accept this nomenclature)
+colnames(subset_panel_maf_filtered)[colnames(subset_panel_maf_filtered) == "Reference_Allele"] <- "REF"
+colnames(subset_panel_maf_filtered)[colnames(subset_panel_maf_filtered) == "Tumor_Seq_Allele2"] <- "ALT"
+
+# Mutational matrices are generated separately for SBS and INDEL mutation types
+
+########################################################################################## SBS ########################################################################################
+# Subset the subset_maf_file datafram to only contain single base susbtitution mutations and only autosomes (chromosomes 1:22)
+sbs_panel <- subset_maf_file[
+  subset_maf_file$Variant_Type == "SNP" &
+  subset_maf_file$Chromosome %in% paste0(1:22),
+]
+
+# Make a Granges list
+sbs_grl_panel <- makeGRangesListFromDataFrame(
+  df = sbs_panel, 
+  seqnames.field = "Chromosome",
+  start.field = "Start_Position",
+  end.field = "End_Position",
+  strand.field = "Strand",
+  split.field = "Tumor_Sample_Barcode",
+  keep.extra.columns = TRUE,
+  starts.in.df.are.0based = FALSE, 
+  seqinfo=NULL,
+  ignore.strand=FALSE
+)
+
+# Specify the genome version in the granges lsit 
+GenomeInfoDb::genome(sbs_grl_panel) = 'hg19'
+
+# Make sure the values in the Chromosome column are formated in the following way: chr1, chr2, instead of just 1, 2
+seqlevels(sbs_grl_panel) <- paste0("chr", seqlevels(sbs_grl_panel))
+seqlevels(sbs_grl_panel) <- gsub("^MT$", "chrM", seqlevels(sbs_grl_panel))
+
+# Generate the SBS mutational matrix
+sbs_mutation_matrix_panel <- mut_matrix(sbs_grl_panel, ref_genome = ref_genome) 
+
+######################################################################################### INDELS ########################################################################################
+# To make the indels mutational matrix correctly, the REF and ALT columns need to be properly formatted in a VCF-like format,
+# such that for insertions the REF columnshouldn't have -, but instead it should have the base before the insertion 
+# Ex. A is REF and then AG is ALT, meaning insertion of G after A. For deletion REF = AGT and ALT=A meaning GT deletion after A
+# To do this we need to find the reference base before the indel position (pos-1) and than modify REF and ALT to include that anchor base
+
+hg19_genome <- BSgenome.Hsapiens.UCSC.hg19
+
+# Add an indelSize column which will contain the length of each insertion and deletion 
+subset_maf_file <- subset_maf_file %>%
+  mutate(indelSize = as.integer(NA))
+
+subset_maf_file <- subset_maf_file %>%
+  mutate(
+    indelSize = case_when(
+      Variant_Type == "DEL" ~ as.integer(nchar(REF)),
+      Variant_Type == "INS" ~ as.integer(nchar(ALT)),
+      TRUE ~ NA_integer_
+    )
+  )
+
+# Subset the subset_maf_file datafram to only contain indel mutations and only autosomes (chromosomes 1:22)
+indel_df <- subset_maf_file %>%
+  filter(
+    Variant_Type %in% c("INS", "DEL"),
+    Chromosome %in% c(as.character(1:22), paste0("chr", 1:22))
+  ) %>%
+  # rename the columns in a VCF-like nomenclature
+  transmute(
+    Tumor_Sample_Barcode,
+    CHROM = Chromosome,
+    POS = Start_Position,
+    END = End_Position,
+    REF = REF,
+    ALT = ALT,
+    Variant_Type,
+    trans.strand = Strand,
+    indelSize
+  ) %>%
+  # add trinculeotide sequence context 
+  ICAMS:::AddSeqContext(ref.genome = hg19_genome, seq.context.width = 1)
+
+# Format indels properly (VCF-style)
+anchor <- substr(indel_df$seq.3bases, 1, 1)
+indel_df <- indel_df %>%
+  mutate(
+    # Insertions
+    REF = ifelse(Variant_Type == "INS", anchor, REF),
+    ALT = ifelse(Variant_Type == "INS", paste0(anchor, ALT), ALT),
+    POS = ifelse(Variant_Type == "INS", POS - 1, POS),
+    
+    # Deletions
+    ALT = ifelse(Variant_Type == "DEL", anchor, ALT),
+    REF = ifelse(Variant_Type == "DEL", paste0(anchor, REF), REF),
+    POS = ifelse(Variant_Type == "DEL", POS - 1, POS),
+    
+    # Add chr prefix if missing
+    CHROM = ifelse(grepl("^chr", as.character(CHROM)), as.character(CHROM), paste0("chr", CHROM))
+  )
+
+# Make GRanges list 
+indel_grl_panel <- makeGRangesListFromDataFrame(indel_df,
+                                                  split.field = "Tumor_Sample_Barcode",
+                                                  keep.extra.columns=TRUE,
+                                                  ignore.strand=FALSE,
+                                                  seqinfo=NULL,
+                                                  seqnames.field="CHROM",
+                                                  start.field="POS",
+                                                  end.field="END",
+                                                  strand.field="trans.strand",
+                                                  starts.in.df.are.0based=FALSE)
+
+# Specify the genome version in the GRanges object
+GenomeInfoDb::genome(indel_grl_panel) = 'hg19'
+
+# Extract indel context and generate the indel mutational matrix
+indel_context_panel <- get_indel_context(indel_grl_panel, ref_genome)
+indel_mut_matrix_panel <- count_indel_contexts(indel_context_panel) 
+
+#################################################################################### COSINE SIMILARITUES ########################################################################################
+# Get the reference COSMIC mutational signatures for SBS and ID
+cosmic_signatures_sbs = get_known_signatures(
+  source = 'COSMIC_v3.2', genome = 'GRCh37') 
+
+cosmic_signatures_indel = get_known_signatures(muttype = 'indel',
+  source = 'COSMIC_v3.2', genome = "GRCh37") 
+
+# Subset the mutational matrices for only the samples that have >= 5 mutations
+# The sample names can be extracted from panel_mutation_data dataframe (generated in Hamonized_SNV_INS_DEL_calculation.R)
+sbs_mutation_matrix_panel <- sbs_mutation_matrix_panel[, colnames(sbs_mutation_matrix_panel) %in% panel_mutation_data$Tumor_Sample_Barcode]
+
+indel_mut_matrix_panel <- indel_mut_matrix_panel[, colnames(indel_mut_matrix_panel) %in% panel_mutation_data$Tumor_Sample_Barcode]
+
+# Generate cosine similarity matrices for SBS and ID signatures that have previosuly been found in bladder cancer 
+sbs_cosine_similarity <- cos_sim_matrix(sbs_mutation_matrix_panel, as.matrix(cosmic_signatures_sbs[, c("SBS1", "SBS2", "SBS5", "SBS8", "SBS13", "SBS29", "SBS40")]))
+id_cosine_similarity <- cos_sim_matrix(indel_mut_matrix_panel, as.matrix(cosmic_signatures_indel[, c("ID1", "ID2", "ID3", "ID4", "ID5", "ID8", "ID9", "ID10", "ID6")]))
+
