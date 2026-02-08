@@ -9,7 +9,7 @@ panel_size <- (sum(unique(bed_file)$End_Position - unique(bed_file)$Start_Positi
 
 # Calculate the harmonized features from the maf (or maf-like style) dataframe. 
 # This is done for each panel version separately and can be merged in one dataframe later on.
-# maf_file should contain mutation information only about the samples of interest (after all processing steps as shown in Processing_maf_file.R).
+# maf_file should contain mutation information only about the samples of interest (after all processing steps as explained in Processing_maf_file.txt).
 # The resulting dataframe will contain raw number of SNV, INS, DEL, as as well as normalized and standardized to z-score values.
 
 library(bestNormalize)
