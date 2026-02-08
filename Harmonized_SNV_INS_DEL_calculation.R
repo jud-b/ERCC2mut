@@ -40,6 +40,13 @@ panel_harmonized_features <- maf_file %>%
   )
 
 # Join the hamronized values dataframes for all panels in one dataframe
-
 panel_mutation_data <- rbind(panel_harmonized_features, panel_harmonized_features_2, panel_harmonized_features_3)
 
+# Add a total_num_mutations column for each sample, calculating the number of SNV+INS+DEL for each sample
+panel_mutation_data <- panel_mutation_data %>% 
+  group_by(Tumor_Sample_Barcode) %>%
+  mutate(total_num_mutations = sum(SNV, INS, DEL)) %>% 
+  ungroup()
+
+# Filter out samples with <5 mutations
+panel_mutation_data <- panel_mutation_data %>% filter(total_num_mutations >= 5)
