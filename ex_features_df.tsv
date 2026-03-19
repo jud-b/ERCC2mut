@@ -1,0 +1,5 @@
+cosine_sbs5	cosine_sbs2	cosine_sbs1	cosine_sbs8	cosine_sbs13	cosine_sbs29	cosine_sbs40	cosine_id8	cosine_id4	cosine_id5	cosine_id9	cosine_id10	cosine_id1	cosine_id2	cosine_id3	SNV_TMB_z	INS_TMB_z	DEL_TMB_z	sample_names	panel	label
+0.82	0.1	0.65	0.3	0.05	0.02	0.2	0.1	0.05	0.03	0.02	0.01	0.6	0.2	0.1	0.52	-0.45	-0.4	SAMPLE_001	TARGET_SEQ_1	ERCC2-MUT
+0.75	0.15	0.6	0.25	0.1	0.01	0.18	0.12	0.04	0.02	0.03	0.01	0.55	0.25	0.12	0.3	-0.5	-0.3	SAMPLE_002	TARGET_SEQ_1	ERCC2-WT
+0.6	0.05	0.5	0.2	0.02	0.03	0.15	0.2	0.1	0.08	0.05	0.02	0.4	0.3	0.2	-0.8	-0.4	1.1	SAMPLE_003	TARGET_SEQ_2	ERCC2-MUT
+0.9	0.2	0.7	0.35	0.15	0.02	0.25	0.08	0.03	0.02	0.01	0.01	0.65	0.18	0.09	1.2	-0.5	-0.4	SAMPLE_004	TARGET_SEQ_2	ERCC2-WT
