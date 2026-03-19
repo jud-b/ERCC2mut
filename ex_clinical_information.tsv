@@ -1,0 +1,11 @@
+AGE_AT_SEQ_REPORT	ONCOTREE_CODE	SAMPLE_TYPE	SEQ_ASSAY_ID	CANCER_TYPE	CANCER_TYPE_DETAILED	SAMPLE_TYPE_DETAILED	SampleID	PatientID
+76	BLCA	Primary	MSK-IMPACT341	Bladder Cancer	Bladder Urothelial Carcinoma	Primary tumor	Sample1	Sample1
+Unknown	BLCA	Metastasis	MSK-IMPACT341	Bladder Cancer	Bladder Urothelial Carcinoma	Metastasis site unspecified	Sample2	Sample2
+58	BLCA	Primary	MSK-IMPACT341	Bladder Cancer	Bladder Urothelial Carcinoma	Primary tumor	Sample3	Sample3
+61	BLCA	Primary	MSK-IMPACT341	Bladder Cancer	Bladder Urothelial Carcinoma	Primary tumor	Sample4	Sample4
+79	BLCA	Metastasis	MSK-IMPACT341	Bladder Cancer	Bladder Urothelial Carcinoma	Metastasis site unspecified	Sample5	Sample5
+65	BLCA	Primary	MSK-IMPACT341	Bladder Cancer	Bladder Urothelial Carcinoma	Primary tumor	Sample6	Sample6
+55	BLCA	Primary	MSK-IMPACT341	Bladder Cancer	Bladder Urothelial Carcinoma	Primary tumor	Sample7	Sample7
+36	BLCA	Primary	MSK-IMPACT341	Bladder Cancer	Bladder Urothelial Carcinoma	Primary tumor	Sample8	Sample8
+56	BLCA	Primary	MSK-IMPACT341	Bladder Cancer	Bladder Urothelial Carcinoma	Primary tumor	Sample9	Sample9
+74	BLCA	Metastasis	MSK-IMPACT341	Bladder Cancer	Bladder Urothelial Carcinoma	Metastasis site unspecified	Sample10	Sample10
