@@ -1,0 +1,9 @@
+Hugo_Symbol	Chromosome	Start_Position	End_Position	Variant_Classification	Variant_Type	Reference_Allele	Tumor_Seq_Allele2	Tumor_Sample_Barcode
+TP53	17	7579472	7579472	Missense_Mutation	SNP	C	T	SAMPLE_001
+FGFR3	4	1807890	1807890	Missense_Mutation	SNP	G	A	SAMPLE_001
+KDM6A	X	44912321	44912321	Nonsense_Mutation	SNP	C	T	SAMPLE_002
+PIK3CA	3	178936091	178936091	Missense_Mutation	SNP	A	G	SAMPLE_002
+RB1	13	48953712	48953712	Frame_Shift_Del	DEL	CT	C	SAMPLE_003
+TERT	5	1295228	1295228	Promoter_Mutation	SNP	C	T	SAMPLE_003
+HRAS	11	532242	532242	Missense_Mutation	SNP	G	T	SAMPLE_004
+ERCC2	19	45351620	45351620	Missense_Mutation	SNP	A	C	SAMPLE_004
