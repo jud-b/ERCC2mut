@@ -1,0 +1,5 @@
+SAMPLE_ID	PATIENT_ID	AGE_AT_SEQ_REPORT	ONCOTREE_CODE	SAMPLE_TYPE	SEQ_ASSAY_ID	CANCER_TYPE	CANCER_TYPE_DETAILED	SAMPLE_TYPE_DETAILED
+SAMPLE_001	PATIENT_01	67	BLCA	Primary	TARGET_SEQ	Bladder	Bladder Urothelial Carcinoma	Primary Tumor
+SAMPLE_002	PATIENT_02	72	BLCA	Primary	TARGET_SEQ	Bladder	Bladder Urothelial Carcinoma	Primary Tumor
+SAMPLE_003	PATIENT_03	59	BLCA	Metastasis	TARGET_SEQ	Bladder	Bladder Urothelial Carcinoma	Lymph Node Metastasis
+SAMPLE_004	PATIENT_04	65	BLCA	Primary	TARGET_SEQ	Bladder	Bladder Urothelial Carcinoma	Primary Tumor
