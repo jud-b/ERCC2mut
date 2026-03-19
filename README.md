@@ -1,2 +1,10 @@
 # ERCC2mut
 Composite mutational signature of ERCC2 deficiency (and more broadly Nucleotide Excision Repair (NER) deficiency) derived from whole exome sequencing (WES) or targeted panel sequencing data.
+
+# To successfully apply the ERCC2mut classifier to another dataset, the following workflow is recommended:
+  1. Processing the MAF-style dataset followinf the instructions in Processing_maf_file.txt
+  2. Creating harmonized SNV, INS and DEL TMB values that are used as features for testing the ERCC2mut model. The script Harmonized_SNV_INS_DEL_calcularion.R provides the code needed to perform this step
+  3. Creating mutational matrices (SBS and ID) and afterwards calculating the cosine similarity values (some of which are used as features in the ERCC2mut model). Mutatational_matrices_and_cosine_similarity.R script shows how to properly make the mutational matrices and get the cosine similarity values
+  4. Collecting all 6 features for the ERCC2mut model into one dataframe. A function to correctly do this can be found in Create_features_dataframe.R script. The inputs for this script are the outputs from the scripts in steps 2 and 3 (specifically the dataframe containing harmonized values (1 row per sample) and cosine similarity matrix)
+  5. Download the trained ERCC2mut classifier. This can be done by downloading the ERCC2mut.rds file
+  6. Load the ERCC2mut classifier and test on your own data. Details on how to correctly load the classifier, get prediction scores, calculate cohort-specific cutpoint and plot the AUC ROC curve are provided in the Test_ERCC2mut_model.R script
