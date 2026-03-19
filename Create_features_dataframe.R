@@ -115,12 +115,12 @@ panel_features_df_more_sigs$sample_names <- panel_mutation_data$Tumor_Sample_Bar
 panel_features_df_more_sigs <- panel_features_df_more_sigs %>%
   mutate(panel = case_when(
     # Group the samples from different version of the same panel under one panel name
-    sample_names %in% c(panel1_samples, panel2_samples, panel2_samples) ~ "PANEL123",
-    sample_names %in% c(targeted_panel_v1, targeted_panel_v2, tagreted_panel_v3) ~ "TARGETED_PANEL",
+    sample_names %in% c(panel1_samples, panel2_samples, panel2_samples) ~ "TARGET_SEQ_1",
+    sample_names %in% c(targeted_panel_v1, targeted_panel_v2, tagreted_panel_v3) ~ "TARGET_SEQ_2",
     TRUE ~ "Other"
   ))
 
 # Make separate dataframes for each panel
-panel_features_df_more_sigs <- panel_features_df_more_sigs %>% filter(panel == "PANEL123")
+panel_features_df_more_sigs <- panel_features_df_more_sigs %>% filter(panel == "TARGET_SEQ_1")
 
-targeted_panel_features_df_more_sigs <- panel_features_df_more_sigs %>% filter(panel == "TARGETED_PANEL")
+targeted_panel_features_df_more_sigs <- panel_features_df_more_sigs %>% filter(panel == "TARGET_SEQ_2")
